@@ -1,0 +1,1 @@
+export const PRODUCTS_JSON = './db/products.json'
