@@ -1,21 +1,13 @@
 import fs from 'fs/promises'
+import { Product } from './Product.js';
+import { PRODUCTS_JSON } from './config.js';
 
-class Product {
-    constructor({ id, title, description, price, thumbnail, code, stock }) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.price = price;
-        this.thumbnail = thumbnail;
-        this.code = code;
-        this.stock = stock;
-    }
-}
+const ruta = PRODUCTS_JSON
 
 export class ProductManager {
     #products 
 
-    constructor({ruta}) {
+    constructor() {
         this.ruta = ruta
         this.#products  = []
     }
@@ -92,23 +84,21 @@ export class ProductManager {
         return product
     }
 
-    async getProducts() {
+    async getProducts(query = {}) {
         await this.#leerProducto()
-        return this.#products
-    }
+        
+        if(query.limit) {
+            return this.#products.filter (p => p.id <= query.limit)
+            }    
+            return this.#products  
+        } 
 
     async getProductById (id) {
         await this.#leerProducto()
         const busqueda = this.#products.find(p=> p.id === id)
-        if (!busqueda) throw new Error ('Not found')
+        if (!busqueda) throw new Error ('El producto no existe')
         return busqueda
     }
 }
 
-
-// async function main() {
-//     const pM = new ProductManager({ruta: 'products.json'})
-
-//     await pM.init()
-// }
 
