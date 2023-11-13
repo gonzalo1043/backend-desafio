@@ -6,10 +6,14 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/servidorExpress.js",
-    "dev": "nodemon -e 'js, html' src/servidorExpress.js "
+    "dev": "nodemon src/servidorExpress.js "
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-handlebars": "^7.1.2",
+    "socket.io": "^4.7.2"
+  }
 }
-

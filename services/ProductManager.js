@@ -1,6 +1,6 @@
 import fs from 'fs/promises'
-import { Product } from './Product.js';
-import { PRODUCTS_JSON } from './config.js';
+import { Product } from '../modules/Product.js';
+import { PRODUCTS_JSON } from '../src/config.js';
 
 const ruta = PRODUCTS_JSON
 
@@ -55,7 +55,7 @@ export class ProductManager {
         if (index !== -1) {
             const arrayConLosBorrados = this.#products.splice(index, 1)
             await this.#escribirProductos()
-            // return arrayConLosBorrados[0]
+            return arrayConLosBorrados[0]
         } else {
             throw new Error ('error al borrar: producto no encontrado')
         }
@@ -88,7 +88,7 @@ export class ProductManager {
         await this.#leerProducto()
         
         if(query.limit) {
-            return this.#products.filter (p => p.id <= query.limit)
+            return this.#products.slice(0,query.limit)
             }    
             return this.#products  
         } 

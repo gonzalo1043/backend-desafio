@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/socket.io/socket.io.js"></script>
+    <script defer src="/static/js/script.js"></script>
+    <title>RealTimeProduct</title>
+</head>
+<body>
+<h1>Productos</h1>
+
+<section id="beforeAdding">
+{{#if hayProductos}}
+
+    {{#each products}}
+    <ul>
+        <li>id: {{this.id}}</li>
+        <li>title: {{this.title}}</li>
+        <li>description: {{this.description}}</li>
+        <li>thumbnail: {{this.thumbnail}}</li>
+        <li>code: {{this.code}}</li>
+        <li>stock: {{this.stock}}</li>
+    </ul>
+    {{/each}}
+
+{{else}}
+Aun no hay productos.
+{{/if}}
+</section>
+
+<section><ul id="products"></ul></section>
+</body>
+</html>

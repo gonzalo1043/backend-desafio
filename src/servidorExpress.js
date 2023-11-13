@@ -1,37 +1,57 @@
 import express from 'express'
-import { ProductManager } from './ProductManager.js'
+
 import { PORT, PRODUCTS_JSON } from './config.js'
+import { ProductManager } from '../services/ProductManager.js'
 
-const productManager = new ProductManager(PRODUCTS_JSON)
+import { webRouter } from './routers/webRouter.js'
+import { apiRouter } from './routers/apiRouter.js'
 
-const app = express()
+import { engine } from 'express-handlebars'
 
-app.get('/products', async (req, res) => {
-    const limit = parseInt(req.query.limit)
-    try {
-        const products = await productManager.getProducts({limit})
-        res.json(products)
-    } catch (error) {
-        res.json({
-            status:'error',
-            message: error.message
-        })
-    }
-})
+import {Server as IOServer} from 'socket.io'
 
-app.get('/products/:id', async (req, res) => {
-    try {
-        const productosId = parseInt(req.params['id'])
-        const productWithId = await productManager.getProductById(productosId)
-        res.json(productWithId)
-    } catch (error) {
-        res.json({
-            status:'error',
-            message: error.message
-        })
-    }
-})
 
-app.listen(PORT, () => {
+
+export const app = express()
+
+const pm = new ProductManager(PRODUCTS_JSON)
+
+
+app.engine('handlebars', engine())
+app.set('views', './views')
+app.set('view engine', 'handlebars')
+
+
+const server = app.listen(PORT, () => {
     console.log('Conectada al puerto 8080')
 })
+
+const ioServer = new IOServer(server)
+
+ioServer.on('connection', async socket => {
+    console.log('cliente conectado:', socket.id)
+    socket.emit('productos', await pm.getProducts())
+
+    socket.on('nuevoProducto', async producto => {
+        await pm.addProduct(producto)
+        ioServer.sockets.emit('productos', await pm.getProducts())
+    })
+})
+
+app.use((req, res, next) => {
+    req['io'] = ioServer
+    next()
+    })
+
+app.use(express.json())
+app.use('/static', express.static('./static'))
+
+app.use('/', webRouter)
+app.use('/api', apiRouter)
+
+
+
+
+
+
+
